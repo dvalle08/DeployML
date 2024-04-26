@@ -3,3 +3,5 @@ env_mlops/
 *.json
 *.csv
 *.pkl
+dataset/
+model/
