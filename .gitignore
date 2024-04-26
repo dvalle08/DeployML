@@ -1,7 +1,4 @@
 env_mlops/
 -ipynb_checkpoints/
 *.json
-*.csv
-*.pkl
-dataset/
-model/
+
