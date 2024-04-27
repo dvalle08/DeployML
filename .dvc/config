@@ -1,0 +1,4 @@
+[core]
+    remote = boostml0054716359
+['remote "boostml0054716359"']
+    url = azure://dvc-example/
