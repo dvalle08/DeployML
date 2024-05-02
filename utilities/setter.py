@@ -1,13 +1,8 @@
-import os
-from base64 import b64decode
-
-def main():
-    key = os.environ.get('SERVICE_ACCOUNT_KEY') #
-    #with open('path.json','w') as json_file:
-        #!json_file.write(b64decode(key).decode())
-    #    json_file.write(key)
-    #print(os.path.realpath('path.json'))
-    print(key)
-
-if __name__ == '__main__':
-    main()
+import os  
+  
+def main():  
+    connection_string = os.environ.get('SERVICE_ACCOUNT_KEY')   
+    print(connection_string)  # Imprime la cadena de conexión   
+  
+if __name__ == '__main__':  
+    main()  
