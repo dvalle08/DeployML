@@ -4,7 +4,8 @@ from base64 import b64decode
 def main():
     key = os.environ.get('AZURE_STORAGE_CONNECTION_STRING')
     with open('path.json','w') as json_file:
-        json_file.write(b64decode(key).decode())
+        #json_file.write(b64decode(key).decode())
+        json_file.write(key)
     print(os.path.realpath('path.json'))
 
 if __name__ == '__main__':
