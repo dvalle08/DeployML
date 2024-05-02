@@ -18,6 +18,9 @@ jobs:
           pip uninstall -y pyOpenSSL  
           pip install cryptography  
           pip install pyOpenSSL==24.0.0
+      - name: Install httpx  
+        run: |  
+          pip install httpx  
       - name: Installing dependencies  
         run: |  
           pip install dvc[azure]  
