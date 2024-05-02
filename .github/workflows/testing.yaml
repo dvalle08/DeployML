@@ -8,11 +8,16 @@ jobs:
     steps:  
       - name: Checkout the repo  
         uses: actions/checkout@v3  
+#      - name: Creating and activating virtualenv  
+#        run: |  
+#          pip3 install virtualenv  
+#          virtualenv venv  
+#          source venv/bin/activate  
       - name: Creating and activating virtualenv  
         run: |  
-          pip3 install virtualenv  
-          virtualenv venv  
-          source venv/bin/activate  
+          apt-get install python3.10-dev python3.10-venv
+          python3.10 -m venv env_project
+          source env_project/bin/activate  
       - name: Fix OpenSSL issue  
         run: |  
           pip uninstall -y pyOpenSSL  
@@ -25,9 +30,6 @@ jobs:
         run: |  
           pip install dvc[azure]  
           pip install -r requirements_test.txt  
-      - name: Install specific version of scikit-learn  
-        run: |  
-          pip install scikit-learn==1.0  
       - name: Test API  
         run: |  
           export AZURE_STORAGE_CONNECTION_STRING=$(python utilities/setter.py)  
