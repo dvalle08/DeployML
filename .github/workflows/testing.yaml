@@ -20,5 +20,5 @@ jobs:
       - name: Test API  
         run: |  
           export AZURE_STORAGE_CONNECTION_STRING=$(python utilities/setter.py)  
-          dvc pull model/model.pkl
+          dvc pull model/model.pkl --force
           pytest tests.py
