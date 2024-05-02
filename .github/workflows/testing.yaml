@@ -26,5 +26,5 @@ jobs:
         run: |  
           export AZURE_STORAGE_CONNECTION_STRING=$(python utilities/setter.py)  
           dvc pull model/model.pkl --force
-          pytest tests.py
+          pytest test.py
 #AZURE_STORAGE_CONNECTION_STRING: es como exige dvc que se llama
