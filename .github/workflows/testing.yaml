@@ -23,5 +23,3 @@ jobs:
           dvc pull model/model.pkl --force
           pytest tests.py
 #AZURE_STORAGE_CONNECTION_STRING: es como exige dvc que se llama
-
-echo "export AZURE_STORAGE_ML_CONNECTION_STRING=" >> ~/.bashrc 
