@@ -15,7 +15,7 @@ jobs:
 #          source venv/bin/activate  
       - name: Creating and activating virtualenv  
         run: |  
-          apt-get install python3.10-dev python3.10-venv
+          sudo apt-get install python3.10-dev python3.10-venv
           python3.10 -m venv env_project
           source env_project/bin/activate  
       - name: Fix OpenSSL issue  
