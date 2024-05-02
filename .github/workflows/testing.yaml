@@ -25,6 +25,9 @@ jobs:
         run: |  
           pip install dvc[azure]  
           pip install -r requirements_test.txt  
+      - name: Install specific version of scikit-learn  
+        run: |  
+          pip install scikit-learn==1.0  
       - name: Test API  
         run: |  
           export AZURE_STORAGE_CONNECTION_STRING=$(python utilities/setter.py)  
