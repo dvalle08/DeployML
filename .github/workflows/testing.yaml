@@ -26,9 +26,6 @@ jobs:
       - name: Install httpx  
         run: |  
           pip install httpx  
-      - name: Install specific version of scikit-learn  
-        run: |  
-          pip install scikit-learn==1.0  
       - name: Installing dependencies  
         run: |  
           pip install dvc[azure]  
