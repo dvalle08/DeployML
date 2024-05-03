@@ -8,11 +8,6 @@ jobs:
     steps:  
       - name: Checkout the repo  
         uses: actions/checkout@v3  
-#      - name: Creating and activating virtualenv  
-#        run: |  
-#          pip3 install virtualenv  
-#          virtualenv venv  
-#          source venv/bin/activate  
       - name: Creating and activating virtualenv  
         run: |  
           sudo apt-get install python3.10-dev python3.10-venv
