@@ -48,5 +48,5 @@ jobs:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }} #Algunos secrets vienen por defecto,
         run: |
           cat report.txt >> report.md 
-          cml-publish prediction_behavior.png --md >> report.md
+          cml-comment prediction_behavior.png --md >> report.md 
           cml-send-comment report.md
