@@ -1,0 +1,41 @@
+name: Continuous Integration/Continuous Deployment  
+on: ['push']  
+jobs:  
+  ci_cd:  
+    runs-on: ubuntu-latest  
+    env:  
+      REGISTRY_NAME: ${{ secrets.REGISTRY_NAME }}  
+      SERVICE_NAME: ${{ secrets.SERVICE_NAME }}  
+      SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}  
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}  
+      AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}  
+    steps:  
+      - name: Checkout Repo  
+        uses: actions/checkout@v2  
+      - name: Set environment and bring the model  
+        run: |  
+          pip3 install virtualenv  
+          virtualenv venv  
+          source venv/bin/activate  
+          pip install dvc[azure]  
+          export AZURE_STORAGE_CONNECTION_STRING=$(python utilities/setter.py)  
+          dvc pull model/model.pkl.dvc  
+      - name: Install Azure CLI  
+        run: |  
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+      - name: Set up Azure credentials  
+        uses: azure/login@v1  
+        with:  
+          creds: ${{ secrets.AZURE_CREDENTIALS }}  
+      - name: Build and Push  
+        run: |  
+          docker build . -t $REGISTRY_NAME:$GITHUB_SHA  
+          docker push $REGISTRY_NAME:$GITHUB_SHA  
+      - name: Deploy to Azure Container Instances  
+        run: |  
+          az container create --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name $SERVICE_NAME --image $REGISTRY_NAME:$GITHUB_SHA --dns-name-label $SERVICE_NAME --ports 80  
+      - name: Log out from Azure  
+        run: az logout  
+
+
+
