@@ -40,12 +40,12 @@ jobs:
           git commit -m "Updating model serialization"
       - uses: ad-m/github-push-action@master #Es una automatización que ya se hizo y que podemos aprovechar
         with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
+            github_token: ${{ secrets.MY_GITHUB_TOKEN }}
             branch: ${{ github.ref }} #Tambien se puede acceder a variables de github
       - uses: iterative/setup-cml@v1
       - name: Push metrics
         env:
-          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }} #Algunos secrets vienen por defecto,
+          REPO_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }} #Algunos secrets vienen por defecto,
         run: |
           cat report.txt >> report.md 
           cml-publish prediction_behavior.png --md >> report.md
