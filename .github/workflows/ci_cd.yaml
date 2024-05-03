@@ -31,8 +31,8 @@ jobs:
       - name: Build and Push  
         run: |  
           az acr login --name ${{ secrets.ACR_NAME }} 
-          docker build . -t $REGISTRY_NAME:$GITHUB_SHA  
-          docker push $REGISTRY_NAME:$GITHUB_SHA  
+          docker build . -t ${{ secrets.REGISTRY_NAME }}:$GITHUB_SHA  
+          docker push ${{ secrets.REGISTRY_NAME }}:$GITHUB_SHA  
       - name: Deploy to Azure Container Instances  
         run: |  
           az container create --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name $SERVICE_NAME --image $REGISTRY_NAME:$GITHUB_SHA --dns-name-label $SERVICE_NAME --ports 80  
