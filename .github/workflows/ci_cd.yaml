@@ -4,6 +4,7 @@ jobs:
   ci_cd:  
     runs-on: ubuntu-latest  
     env:  
+      ACR_NAME: ${{ secrets.ACR_NAME }}  
       REGISTRY_NAME: ${{ secrets.REGISTRY_NAME }}  
       SERVICE_NAME: ${{ secrets.SERVICE_NAME }}  
       SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}  
@@ -11,7 +12,7 @@ jobs:
       AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}  
     steps:  
       - name: Checkout Repo  
-        uses: actions/checkout@v2  
+        uses: actions/checkout@v3  
       - name: Set environment and bring the model  
         run: |  
           pip3 install virtualenv  
@@ -29,6 +30,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}  
       - name: Build and Push  
         run: |  
+          az acr login --name ${{ secrets.ACR_NAME }} 
           docker build . -t $REGISTRY_NAME:$GITHUB_SHA  
           docker push $REGISTRY_NAME:$GITHUB_SHA  
       - name: Deploy to Azure Container Instances  
@@ -36,6 +38,5 @@ jobs:
           az container create --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name $SERVICE_NAME --image $REGISTRY_NAME:$GITHUB_SHA --dns-name-label $SERVICE_NAME --ports 80  
       - name: Log out from Azure  
         run: az logout  
-
 
 
