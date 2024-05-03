@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
       - name: Train model
         env: 
           SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
@@ -40,12 +40,12 @@ jobs:
           git commit -m "Updating model serialization"
       - uses: ad-m/github-push-action@master #Es una automatización que ya se hizo y que podemos aprovechar
         with:
-            github_token: ${{ secrets.token_ml_deploy }}
+            github_token: ${{ secrets.GITHUB_TOKEN }}
             branch: ${{ github.ref }} #Tambien se puede acceder a variables de github
       - uses: iterative/setup-cml@v1
       - name: Push metrics
         env:
-          REPO_TOKEN: ${{ secrets.token_ml_deploy }} #Algunos secrets vienen por defecto,
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }} #Algunos secrets vienen por defecto,
         run: |
           cat report.txt >> report.md 
           cml-publish prediction_behavior.png --md >> report.md
