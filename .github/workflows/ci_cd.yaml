@@ -41,7 +41,6 @@ jobs:
           docker push ${{ secrets.REGISTRY_NAME }}/my-app:latest  
       - name: Deploy to Azure Container Instances  
         run: |  
-          az container create --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name $SERVICE_NAME --image $REGISTRY_NAME:$GITHUB_SHA --dns-name-label $SERVICE_NAME --ports 80  
+          az container create --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.SERVICE_NAME }} --image ${{ secrets.REGISTRY_NAME }}:$GITHUB_SHA --dns-name-label ${{ secrets.SERVICE_NAME }} --ports 80  
       - name: Log out from Azure  
         run: az logout  #
-
