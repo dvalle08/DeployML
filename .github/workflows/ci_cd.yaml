@@ -33,7 +33,8 @@ jobs:
       - name: Login to ACR  
         run: echo ${{ secrets.ACR_PASSWORD }} | docker login ${{ secrets.REGISTRY_NAME }} -u ${{ secrets.ACR_TOKEN }} --password-stdin  
       - name: Build and Push  
-        run: |  
+        run: |
+          docker login ${{ secrets.REGISTRY_NAME }} 
           docker build . -t ${{ secrets.REGISTRY_NAME }}:$GITHUB_SHA  
           docker push ${{ secrets.REGISTRY_NAME }}:$GITHUB_SHA  
       - name: Deploy to Azure Container Instances  
