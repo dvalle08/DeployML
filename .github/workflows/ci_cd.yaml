@@ -39,4 +39,3 @@ jobs:
       - name: Log out from Azure  
         run: az logout  #
 
-
