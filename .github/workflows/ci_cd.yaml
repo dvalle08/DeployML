@@ -5,20 +5,14 @@ jobs:
     runs-on: ubuntu-latest  
     env:  
       ACR_NAME: ${{ secrets.ACR_NAME }}  
+      ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}  
+      ACR_TOKEN: ${{ secrets.ACR_TOKEN }}  
       REGISTRY_NAME: ${{ secrets.REGISTRY_NAME }}  
       SERVICE_NAME: ${{ secrets.SERVICE_NAME }}  
       SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}  
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}  
       AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}  
     steps:  
-      - name: Debug  
-        run: |
-          echo ${{ secrets.ACR_NAME }} 
-          echo ${{ secrets.REGISTRY_NAME }} 
-          echo ${{ secrets.SERVICE_NAME }} 
-          echo ${{ secrets.SERVICE_ACCOUNT_KEY }} 
-          echo ${{ secrets.AZURE_RESOURCE_GROUP }} 
-
       - name: Checkout Repo  
         uses: actions/checkout@v3  
       - name: Set environment and bring the model  
@@ -36,9 +30,10 @@ jobs:
         uses: azure/login@v1  
         with:  
           creds: ${{ secrets.AZURE_CREDENTIALS }}  
+      - name: Login to ACR  
+        run: echo ${{ secrets.ACR_PASSWORD }} | docker login ${{ secrets.REGISTRY_NAME }} -u ${{ secrets.ACR_TOKEN }} --password-stdin  
       - name: Build and Push  
         run: |  
-          az acr login --name ${{ secrets.ACR_NAME }} 
           docker build . -t ${{ secrets.REGISTRY_NAME }}:$GITHUB_SHA  
           docker push ${{ secrets.REGISTRY_NAME }}:$GITHUB_SHA  
       - name: Deploy to Azure Container Instances  
