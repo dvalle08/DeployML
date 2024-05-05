@@ -46,6 +46,6 @@ jobs:
           az container delete --name ${{ secrets.SERVICE_NAME }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --yes || true
       - name: Deploy to Azure Container Instances  
         run: |    
-          az container create --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.SERVICE_NAME }} --image ${{ secrets.REGISTRY_NAME }}/${{ secrets.SERVICE_NAME }}:$GITHUB_SHA --dns-name-label ${{ secrets.SERVICE_NAME }} --ports 80 --registry-login-server ${{ secrets.REGISTRY_NAME }} --registry-username ${{ secrets.REGISTRY_USERNAME }} --registry-password ${{ secrets.REGISTRY_PASSWORD }} --cpu 4 --memory 12 
+          az container create --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.SERVICE_NAME }} --image ${{ secrets.REGISTRY_NAME }}/${{ secrets.SERVICE_NAME }}:$GITHUB_SHA --dns-name-label ${{ secrets.SERVICE_NAME }} --ports 8000 --registry-login-server ${{ secrets.REGISTRY_NAME }} --registry-username ${{ secrets.REGISTRY_USERNAME }} --registry-password ${{ secrets.REGISTRY_PASSWORD }} --cpu 4 --memory 12 
       - name: Log out from Azure  
         run: az logout  #
