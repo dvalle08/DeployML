@@ -1,0 +1,65 @@
+name: Continuous Integration/Continuous Deployment  
+on: 
+  push:
+     branches:
+      - main 
+  workflow_run:
+    workflows: ["Continuous Training"]
+    branches: [main]
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: Why to run this?
+        required: false
+        default: running CI/CD
+jobs:  
+  ci_cd:  
+    runs-on: ubuntu-latest  
+    env:  
+      ACR_NAME: ${{ secrets.ACR_NAME }}  
+      ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}  
+      ACR_TOKEN: ${{ secrets.ACR_TOKEN }}  
+      REGISTRY_NAME: ${{ secrets.REGISTRY_NAME }}  
+      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}  
+      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}  
+      SERVICE_NAME: ${{ secrets.SERVICE_NAME }}  
+      SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}  
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}  
+      AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}  
+    steps:  
+      - name: Checkout Repo  
+        uses: actions/checkout@v3  
+      - name: Set environment and bring the model  
+        run: |  
+          pip3 install virtualenv  
+          virtualenv venv  
+          source venv/bin/activate  
+          pip install dvc[azure]  
+          export AZURE_STORAGE_CONNECTION_STRING=$(python utilities/setter.py)  
+          dvc pull model/model.pkl.dvc  
+      - name: Install Azure CLI  
+        run: |  
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+      - name: Set up Azure credentials  
+        uses: azure/login@v1  
+        with:  
+          creds: ${{ secrets.AZURE_CREDENTIALS }}  
+      - name: Login to ACR  
+        run: echo ${{ secrets.ACR_PASSWORD }} | docker login ${{ secrets.REGISTRY_NAME }} -u ${{ secrets.ACR_TOKEN }} --password-stdin  
+      - name: Build and Push  
+        run: |
+          docker login ${{ secrets.REGISTRY_NAME }} 
+          docker build . -t ${{ secrets.REGISTRY_NAME }}/${{ secrets.SERVICE_NAME }}:$GITHUB_SHA    
+          docker tag ${{ secrets.REGISTRY_NAME }}/${{ secrets.SERVICE_NAME }}:$GITHUB_SHA ${{ secrets.REGISTRY_NAME }}/${{ secrets.SERVICE_NAME }}:latest  
+          docker push ${{ secrets.REGISTRY_NAME }}/${{ secrets.SERVICE_NAME }}:$GITHUB_SHA  
+          docker push ${{ secrets.REGISTRY_NAME }}/${{ secrets.SERVICE_NAME }}:latest  
+      - name: Remove existing Azure Container Instance (if exists)  
+        run: |  
+          az container delete --name ${{ secrets.SERVICE_NAME }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --yes || true
+      - name: Deploy to Azure Container Instances  
+        run: |    
+          az container create --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.SERVICE_NAME }} --image ${{ secrets.REGISTRY_NAME }}/${{ secrets.SERVICE_NAME }}:$GITHUB_SHA --dns-name-label ${{ secrets.SERVICE_NAME }} --ports 8000 --registry-login-server ${{ secrets.REGISTRY_NAME }} --registry-username ${{ secrets.REGISTRY_USERNAME }} --registry-password ${{ secrets.REGISTRY_PASSWORD }} --cpu 4 --memory 12 
+      - name: Log out from Azure  
+        run: az logout  #

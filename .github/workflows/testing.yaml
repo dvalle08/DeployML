@@ -1,0 +1,33 @@
+name: Testing API  
+on: [push, pull_request]  
+jobs:  
+  testing-api:  
+    runs-on: ubuntu-latest  
+    env:  
+      SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}  
+    steps:  
+      - name: Checkout the repo  
+        uses: actions/checkout@v3  
+      - name: Creating and activating virtualenv  
+        run: |  
+          sudo apt-get install python3.10-dev python3.10-venv
+          python3.10 -m venv env_project
+          source env_project/bin/activate  
+      - name: Fix OpenSSL issue  
+        run: |  
+          pip uninstall -y pyOpenSSL  
+          pip install cryptography  
+          pip install pyOpenSSL==24.0.0
+      - name: Install httpx  
+        run: |  
+          pip install httpx  
+      - name: Installing dependencies  
+        run: |  
+          pip install dvc[azure]  
+          pip install -r requirements_test.txt  
+      - name: Test API  
+        run: |  
+          export AZURE_STORAGE_CONNECTION_STRING=$(python utilities/setter.py)  
+          dvc pull model/model.pkl
+          pytest test.py
+#AZURE_STORAGE_CONNECTION_STRING: es como exige dvc que se llama

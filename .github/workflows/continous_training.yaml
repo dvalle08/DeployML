@@ -1,0 +1,49 @@
+name: Continuous Training
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: Why to run this?
+        required: false
+        default: running CT
+jobs:
+  continuous-training:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Train model
+        env: 
+          SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
+        run: |
+           pip3 install virtualenv
+           virtualenv venv
+           source venv/bin/activate
+           pip install -r src/requirements.txt
+           export AZURE_STORAGE_CONNECTION_STRING=$(python utilities/setter.py)
+           dvc pull model/model.pkl.dvc
+           dvc unprotect model/model.pkl
+           dvc repro -f 
+           echo "Training Completed"
+           dvc add model/model.pkl
+           dvc push model/model.pkl.dvc
+      - name: Commit .dvc file changes
+        run: |
+          git config --local user.email "valle.diegof@gmail.com"
+          git config --local user.name "github-actions[bot]"
+          git add model/model.pkl.dvc
+          git commit -m "Updating model serialization"
+      - uses: ad-m/github-push-action@master #Es una automatización que ya se hizo y que podemos aprovechar
+        with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            branch: ${{ github.ref }} #Tambien se puede acceder a variables de github
+      - uses: iterative/setup-cml@v2
+      - name: Push metrics
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }} #Algunos secrets vienen por defecto,
+        run: |
+          cat report.txt >> report.md 
+          echo "![](./prediction_behavior.png)" >> report.md
+          cml comment create report.md
