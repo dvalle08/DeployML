@@ -37,10 +37,10 @@ jobs:
       - name: Build and Push  
         run: |
           docker login ${{ secrets.REGISTRY_NAME }} 
-          docker build . -t ${{ secrets.REGISTRY_NAME }}/my-app:$GITHUB_SHA    
-          docker tag ${{ secrets.REGISTRY_NAME }}/my-app:$GITHUB_SHA ${{ secrets.REGISTRY_NAME }}/my-app:latest  
-          docker push ${{ secrets.REGISTRY_NAME }}/my-app:$GITHUB_SHA  
-          docker push ${{ secrets.REGISTRY_NAME }}/my-app:latest  
+          docker build . -t ${{ secrets.REGISTRY_NAME }}/${{ secrets.SERVICE_NAME }}:$GITHUB_SHA    
+          docker tag ${{ secrets.REGISTRY_NAME }}/${{ secrets.SERVICE_NAME }}:$GITHUB_SHA ${{ secrets.REGISTRY_NAME }}/${{ secrets.SERVICE_NAME }}:latest  
+          docker push ${{ secrets.REGISTRY_NAME }}/${{ secrets.SERVICE_NAME }}:$GITHUB_SHA  
+          docker push ${{ secrets.REGISTRY_NAME }}/${{ secrets.SERVICE_NAME }}:latest  
       - name: Deploy to Azure Container Instances  
         run: |    
           az container create --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.SERVICE_NAME }} --image ${{ secrets.REGISTRY_NAME }}:$GITHUB_SHA --dns-name-label ${{ secrets.SERVICE_NAME }} --ports 80 --registry-login-server ${{ secrets.REGISTRY_NAME }} --registry-username ${{ secrets.REGISTRY_USERNAME }} --registry-password ${{ secrets.REGISTRY_PASSWORD }} --cpu 4 --memory 12
