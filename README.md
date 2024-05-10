@@ -1,18 +1,18 @@
-# Despliegue de un Modelo de Machine Learning en Azure Container  
+# Development and Deployment of a Machine Learning Model in Azure Container with CI/CD using GitHub Actions
   
-## Descripción del Proyecto  
+## Project Description  
   
-Este proyecto consiste en el despliegue de un modelo de Machine Learning (ML) en Azure Container Instances. El objetivo es proveer un endpoint para hacer predicciones en tiempo real utilizando un modelo previamente entrenado.  
+his project involves the deployment of a Machine Learning (ML) model in Azure Container Instances. The objective is to provide an endpoint for making real-time predictions using a previously trained model.
+   
+## Deployment  
   
-## Despliegue  
+The deployment consists of the following stages: 
   
-El despliegue consta de las siguientes etapas:  
-  
-1. **Construcción de la imagen Docker**: La imagen Docker se construye utilizando el Dockerfile proporcionado. Este proceso incluye la instalación de todas las dependencias listadas en `requirements.txt`.  
-2. **Despliegue en Azure Container Instances**: Una vez construida la imagen Docker, se despliega en Azure Container Instances. Durante este proceso, se especifica el nombre DNS y se expone el puerto requerido.  
-3. **Acceso al endpoint de predicción**: Una vez desplegado el contenedor, la aplicación puede ser accedida a través de la URL proporcionada por Azure Container Instances. Las predicciones pueden ser realizadas enviando una solicitud POST a la URL con los datos de entrada apropiados.  
+1. **Docker Image Construction**: The Docker image is built using the provided Dockerfile. This process includes the installation of all dependencies listed in `requirements.txt`.  
+2. **Deployment in Azure Container Instances**: Once the Docker image is built, it is deployed in Azure Container Instances. During this process, the DNS name is specified and the required port is exposed.  
+3. **Access to the prediction endpoint**: Once the container is deployed, the application can be accessed through the URL provided by Azure Container Instances. Predictions can be made by sending a POST request to the URL with the appropriate input data.  
 
-## Tecnologías Utilizadas  
+## Technologies Used  
   
 - Python  
 - FastAPI  
